@@ -1,19 +1,7 @@
+cat > .gitignore << EOF
 node_modules/
-target/
-_out/
-gen/
-
-.cdsrc-private.json
-default-*.json
-*.sqlite
-
-# MTA
-mta_archives/
-*_mta_build_tmp
+db/inventory.db
+.env
 *.mtar
-
-# Other
-.DS_Store
-
-# @cap-js/cds-typer
-@cds-models
+mta_archives/
+EOF
