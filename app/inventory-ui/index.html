@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Inventory Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="sidebar">
+    <h2>Inventory</h2>
+    <a href="index.html">Dashboard</a>
+    <a href="products.html">Products</a>
+    <a href="movements.html">Movements</a>
+    <a href="orders.html">Orders</a>
+  </div>
+
+  <div class="main">
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <p>Total Products</p>
+        <h2 id="kpi-total">--</h2>
+      </div>
+      <div class="kpi-card warning">
+        <p>Low Stock Alerts</p>
+        <h2 id="kpi-low">--</h2>
+      </div>
+      <div class="kpi-card">
+        <p>Pending Reorders</p>
+        <h2 id="kpi-reorders">--</h2>
+      </div>
+      <div class="kpi-card">
+        <p>Warehouses</p>
+        <h2 id="kpi-warehouses">--</h2>
+      </div>
+    </div>
+
+    <div class="charts-grid">
+      <div class="chart-box">
+        <h3>Stock levels by product</h3>
+        <canvas id="stockChart"></canvas>
+      </div>
+      <div class="chart-box">
+        <h3>Stock movement trend</h3>
+        <canvas id="trendChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <script src="dashboard.js"></script>
+</body>
+</html>
