@@ -26,10 +26,11 @@ jobs:
       - name: Build MTA
         run: mbt build
 
-      - name: Install CF CLI
+      - name: Install CF CLI and multiapps plugin
         run: |
           curl -L "https://packages.cloudfoundry.org/stable?release=linux64-binary&version=v8&source=github" | tar -zx
           sudo mv cf8 /usr/local/bin/cf
+          cf install-plugin multiapps -f
 
       - name: Deploy to BTP
         run: |
