@@ -145,7 +145,7 @@
 
     async function updateStatus() {
       const status = document.getElementById('m-status').value;
-      const res = await fetch(`${BASE}/PurchaseOrders(${selectedOrderId})`, {
+      const res = await fetch(`${BASE}/PurchaseOrders('${selectedOrderId}')`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status })
