@@ -1,0 +1,9 @@
+VIEW InventoryService_StockMovements AS SELECT
+  StockMovement_0.ID,
+  StockMovement_0.product_ID,
+  StockMovement_0.warehouse_ID,
+  StockMovement_0.type,
+  StockMovement_0.quantity,
+  StockMovement_0.movedAt,
+  StockMovement_0.movedBy
+FROM inventory_StockMovement AS StockMovement_0

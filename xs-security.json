@@ -1,0 +1,7 @@
+{
+  "xsappname": "dev_project",
+  "tenant-mode": "dedicated",
+  "description": "Inventory & Warehouse Management App",
+  "scopes": [],
+  "role-templates": []
+}

@@ -1,0 +1,35 @@
+{
+  "format_version": 1,
+  "imports": [
+    {
+      "target_table": "INVENTORY_PURCHASEORDER",
+      "source_data": {
+        "data_type": "CSV",
+        "file_name": "inventory-PurchaseOrder.csv",
+        "has_header": true,
+        "type_config": {
+          "delimiter": ","
+        }
+      },
+      "import_settings": {
+        "import_columns": [
+          "ID",
+          "PRODUCT_ID",
+          "SUPPLIER_ID",
+          "QUANTITY",
+          "STATUS",
+          "CREATEDAT"
+        ],
+        "include_filter": []
+      },
+      "column_mappings": {
+        "ID": "ID",
+        "PRODUCT_ID": "product_ID",
+        "SUPPLIER_ID": "supplier_ID",
+        "QUANTITY": "quantity",
+        "STATUS": "status",
+        "CREATEDAT": "createdAt"
+      }
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+COLUMN TABLE inventory_StockMovement (
+  ID NVARCHAR(36) NOT NULL,
+  product_ID NVARCHAR(36),
+  warehouse_ID NVARCHAR(36),
+  type NVARCHAR(10),
+  quantity INTEGER,
+  movedAt TIMESTAMP,
+  movedBy NVARCHAR(100),
+  PRIMARY KEY(ID)
+)

@@ -1,0 +1,7 @@
+VIEW InventoryService_Products AS SELECT
+  Product_0.ID,
+  Product_0.name,
+  Product_0.category,
+  Product_0.unit,
+  Product_0.threshold
+FROM inventory_Product AS Product_0

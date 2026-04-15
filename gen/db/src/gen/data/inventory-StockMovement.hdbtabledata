@@ -1,0 +1,37 @@
+{
+  "format_version": 1,
+  "imports": [
+    {
+      "target_table": "INVENTORY_STOCKMOVEMENT",
+      "source_data": {
+        "data_type": "CSV",
+        "file_name": "inventory-StockMovement.csv",
+        "has_header": true,
+        "type_config": {
+          "delimiter": ","
+        }
+      },
+      "import_settings": {
+        "import_columns": [
+          "ID",
+          "PRODUCT_ID",
+          "WAREHOUSE_ID",
+          "TYPE",
+          "QUANTITY",
+          "MOVEDAT",
+          "MOVEDBY"
+        ],
+        "include_filter": []
+      },
+      "column_mappings": {
+        "ID": "ID",
+        "PRODUCT_ID": "product_ID",
+        "WAREHOUSE_ID": "warehouse_ID",
+        "TYPE": "type",
+        "QUANTITY": "quantity",
+        "MOVEDAT": "movedAt",
+        "MOVEDBY": "movedBy"
+      }
+    }
+  ]
+}

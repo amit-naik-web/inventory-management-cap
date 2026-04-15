@@ -1,0 +1,5 @@
+VIEW InventoryService_Suppliers AS SELECT
+  Supplier_0.ID,
+  Supplier_0.name,
+  Supplier_0.email
+FROM inventory_Supplier AS Supplier_0

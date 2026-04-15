@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Stock Movements</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="sidebar">
+    <h2>Inventory</h2>
+    <a href="index.html">Dashboard</a>
+    <a href="products.html">Products</a>
+    <a href="movements.html" class="active">Movements</a>
+    <a href="orders.html">Orders</a>
+  </div>
+
+  <div class="main">
+    <div class="page-header">
+      <h2>Stock Movements</h2>
+      <select id="typeFilter" onchange="filterMovements()">
+        <option value="">All</option>
+        <option value="IN">IN</option>
+        <option value="OUT">OUT</option>
+      </select>
+    </div>
+
+    <div class="table-box">
+      <table id="movTable">
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th>Warehouse</th>
+            <th>Type</th>
+            <th>Quantity</th>
+            <th>Moved By</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody id="movBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+const BASE = 'https://994ae882trial-dev-dev-project-srv.cfapps.us10-001.hana.ondemand.com/odata/v4/inventory';
+    let allMovements = [];
+
+    async function loadMovements() {
+      const [movRes, prodRes, whRes] = await Promise.all([
+        fetch(`${BASE}/StockMovements`),
+        fetch(`${BASE}/Products`),
+        fetch(`${BASE}/Warehouses`)
+      ]);
+
+      const movements  = movRes.ok  ? (await movRes.json()).value  : [];
+      const products   = prodRes.ok ? (await prodRes.json()).value : [];
+      const warehouses = whRes.ok   ? (await whRes.json()).value   : [];
+
+      const prodMap = {};
+      products.forEach(p => prodMap[p.ID] = p.name);
+
+      const whMap = {};
+      warehouses.forEach(w => whMap[w.ID] = w.name);
+
+      allMovements = movements.map(m => ({
+        ...m,
+        productName:   prodMap[m.product_ID]   || m.product_ID,
+        warehouseName: whMap[m.warehouse_ID]   || m.warehouse_ID,
+        date: m.movedAt ? m.movedAt.split('T')[0] : '--'
+      }));
+
+      renderTable(allMovements);
+    }
+
+    function renderTable(data) {
+      const tbody = document.getElementById('movBody');
+      tbody.innerHTML = data.map(m => `
+        <tr>
+          <td>${m.productName}</td>
+          <td>${m.warehouseName}</td>
+          <td><span class="badge ${m.type === 'IN' ? 'badge-success' : 'badge-danger'}">${m.type}</span></td>
+          <td>${m.quantity}</td>
+          <td>${m.movedBy || '--'}</td>
+          <td>${m.date}</td>
+        </tr>`).join('');
+    }
+
+    function filterMovements() {
+      const type = document.getElementById('typeFilter').value;
+      renderTable(type ? allMovements.filter(m => m.type === type) : allMovements);
+    }
+
+    loadMovements();
+  </script>
+</body>
+</html>

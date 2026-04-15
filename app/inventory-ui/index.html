@@ -8,13 +8,18 @@
 <body>
   <div class="sidebar">
     <h2>Inventory</h2>
-    <a href="index.html">Dashboard</a>
+    <a href="index.html" class="active">Dashboard</a>
     <a href="products.html">Products</a>
     <a href="movements.html">Movements</a>
     <a href="orders.html">Orders</a>
   </div>
 
   <div class="main">
+    <div class="page-header">
+      <h2>Dashboard</h2>
+      <button class="btn" onclick="openModal()">+ Add Movement</button>
+    </div>
+
     <div class="kpi-grid">
       <div class="kpi-card">
         <p>Total Products</p>
@@ -46,6 +51,25 @@
     </div>
   </div>
 
-  <script src="dashboard.js"></script>
+  <!-- Modal -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <h3>Add Stock Movement</h3>
+      <select id="m-product"></select>
+      <select id="m-warehouse"></select>
+      <select id="m-type">
+        <option value="IN">IN</option>
+        <option value="OUT">OUT</option>
+      </select>
+      <input type="number" id="m-quantity" placeholder="Quantity" min="1">
+      <input type="text" id="m-movedBy" placeholder="Your name">
+      <div class="modal-actions">
+        <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+        <button class="btn" onclick="submitMovement()">Submit</button>
+      </div>
+    </div>
+  </div>
+
+<script src="dashboard.js?v=2"></script>
 </body>
 </html>

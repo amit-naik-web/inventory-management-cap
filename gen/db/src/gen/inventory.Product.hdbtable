@@ -1,0 +1,8 @@
+COLUMN TABLE inventory_Product (
+  ID NVARCHAR(36) NOT NULL,
+  name NVARCHAR(100),
+  category NVARCHAR(50),
+  unit NVARCHAR(20),
+  threshold INTEGER DEFAULT 10,
+  PRIMARY KEY(ID)
+)

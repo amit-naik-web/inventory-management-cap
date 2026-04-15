@@ -1,0 +1,5 @@
+VIEW InventoryService_Warehouses AS SELECT
+  Warehouse_0.ID,
+  Warehouse_0.name,
+  Warehouse_0.location
+FROM inventory_Warehouse AS Warehouse_0

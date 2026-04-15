@@ -1,0 +1,8 @@
+VIEW InventoryService_PurchaseOrders AS SELECT
+  PurchaseOrder_0.ID,
+  PurchaseOrder_0.supplier_ID,
+  PurchaseOrder_0.product_ID,
+  PurchaseOrder_0.quantity,
+  PurchaseOrder_0.status,
+  PurchaseOrder_0.createdAt
+FROM inventory_PurchaseOrder AS PurchaseOrder_0

@@ -1,0 +1,6 @@
+ID,product_ID,warehouse_ID,type,quantity,movedAt,movedBy
+m1,p1,w1,IN,10,2024-04-01T09:00:00Z,Admin
+m2,p2,w1,IN,8,2024-04-01T09:00:00Z,Admin
+m3,p3,w1,IN,50,2024-04-01T09:00:00Z,Admin
+m4,p1,w1,OUT,8,2024-04-02T10:00:00Z,Admin
+m5,p3,w1,OUT,35,2024-04-02T10:00:00Z,Admin

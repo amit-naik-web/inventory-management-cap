@@ -1,0 +1,9 @@
+COLUMN TABLE inventory_PurchaseOrder (
+  ID NVARCHAR(36) NOT NULL,
+  supplier_ID NVARCHAR(36),
+  product_ID NVARCHAR(36),
+  quantity INTEGER,
+  status NVARCHAR(20) DEFAULT 'PENDING',
+  createdAt TIMESTAMP,
+  PRIMARY KEY(ID)
+)

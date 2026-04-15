@@ -1,0 +1,62 @@
+_schema-version: 3.3.0
+ID: dev_project
+version: 1.0.0
+description: "Inventory & Warehouse Management App"
+parameters:
+  enable-parallel-deployments: true
+build-parameters:
+  before-all:
+    - builder: custom
+      commands:
+        - npm ci
+        - npx cds build --production
+modules:
+  - name: dev_project-srv
+    type: nodejs
+    path: gen/srv
+    parameters:
+      instances: 1
+      buildpack: nodejs_buildpack
+    build-parameters:
+      builder: npm-ci
+    provides:
+      - name: srv-api
+        properties:
+          srv-url: ${default-url}
+    requires:
+      - name: dev_project-db
+      - name: dev_project-uaa       # ← ADDED
+
+  - name: dev_project-db-deployer
+    type: hdb
+    path: gen/db
+    parameters:
+      buildpack: nodejs_buildpack
+    requires:
+      - name: dev_project-db
+
+  - name: dev_project-app
+    type: staticfile
+    path: app/inventory-ui
+    parameters:
+      buildpack: staticfile_buildpack
+    build-parameters:
+      no-source: false
+    requires:
+      - name: srv-api
+      - name: dev_project-uaa       # ← ADDED
+
+resources:
+  - name: dev_project-db
+    type: com.sap.xs.hdi-container
+    parameters:
+      service: hana
+      service-plan: hdi-shared
+      existing-service: leave-hana
+
+  - name: dev_project-uaa           # ← ADDED
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: xsuaa
+      service-plan: application
+      path: ./xs-security.json

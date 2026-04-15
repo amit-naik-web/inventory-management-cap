@@ -28,9 +28,12 @@
         "kind": "dummy"
       }
     },
-  "server": {
-    "impl": "srv/server.js"
-  }
+    "server": {
+      "impl": "srv/server.js"
+    }
   },
-  "private": true
+  "private": true,
+  "engines": {
+    "node": ">=20"
+  }
 }

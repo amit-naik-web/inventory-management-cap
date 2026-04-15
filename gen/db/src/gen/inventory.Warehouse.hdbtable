@@ -1,0 +1,6 @@
+COLUMN TABLE inventory_Warehouse (
+  ID NVARCHAR(36) NOT NULL,
+  name NVARCHAR(100),
+  location NVARCHAR(100),
+  PRIMARY KEY(ID)
+)

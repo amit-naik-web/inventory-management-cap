@@ -1,0 +1,29 @@
+{
+  "format_version": 1,
+  "imports": [
+    {
+      "target_table": "INVENTORY_WAREHOUSE",
+      "source_data": {
+        "data_type": "CSV",
+        "file_name": "inventory-Warehouse.csv",
+        "has_header": true,
+        "type_config": {
+          "delimiter": ","
+        }
+      },
+      "import_settings": {
+        "import_columns": [
+          "ID",
+          "NAME",
+          "LOCATION"
+        ],
+        "include_filter": []
+      },
+      "column_mappings": {
+        "ID": "ID",
+        "NAME": "name",
+        "LOCATION": "location"
+      }
+    }
+  ]
+}

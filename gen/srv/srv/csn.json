@@ -1,0 +1,449 @@
+{
+  "namespace": "inventory",
+  "definitions": {
+    "inventory.Product": {
+      "kind": "entity",
+      "elements": {
+        "ID": {
+          "key": true,
+          "type": "cds.UUID"
+        },
+        "name": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "category": {
+          "type": "cds.String",
+          "length": 50
+        },
+        "unit": {
+          "type": "cds.String",
+          "length": 20
+        },
+        "threshold": {
+          "type": "cds.Integer",
+          "default": {
+            "val": 10
+          }
+        }
+      }
+    },
+    "inventory.Warehouse": {
+      "kind": "entity",
+      "elements": {
+        "ID": {
+          "key": true,
+          "type": "cds.UUID"
+        },
+        "name": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "location": {
+          "type": "cds.String",
+          "length": 100
+        }
+      }
+    },
+    "inventory.StockMovement": {
+      "kind": "entity",
+      "elements": {
+        "ID": {
+          "key": true,
+          "type": "cds.UUID"
+        },
+        "product": {
+          "type": "cds.Association",
+          "target": "inventory.Product",
+          "keys": [
+            {
+              "ref": [
+                "ID"
+              ]
+            }
+          ]
+        },
+        "warehouse": {
+          "type": "cds.Association",
+          "target": "inventory.Warehouse",
+          "keys": [
+            {
+              "ref": [
+                "ID"
+              ]
+            }
+          ]
+        },
+        "type": {
+          "type": "cds.String",
+          "length": 10
+        },
+        "quantity": {
+          "type": "cds.Integer"
+        },
+        "movedAt": {
+          "type": "cds.Timestamp"
+        },
+        "movedBy": {
+          "type": "cds.String",
+          "length": 100
+        }
+      }
+    },
+    "inventory.Supplier": {
+      "kind": "entity",
+      "elements": {
+        "ID": {
+          "key": true,
+          "type": "cds.UUID"
+        },
+        "name": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "email": {
+          "type": "cds.String",
+          "length": 100
+        }
+      }
+    },
+    "inventory.PurchaseOrder": {
+      "kind": "entity",
+      "elements": {
+        "ID": {
+          "key": true,
+          "type": "cds.UUID"
+        },
+        "supplier": {
+          "type": "cds.Association",
+          "target": "inventory.Supplier",
+          "keys": [
+            {
+              "ref": [
+                "ID"
+              ]
+            }
+          ]
+        },
+        "product": {
+          "type": "cds.Association",
+          "target": "inventory.Product",
+          "keys": [
+            {
+              "ref": [
+                "ID"
+              ]
+            }
+          ]
+        },
+        "quantity": {
+          "type": "cds.Integer"
+        },
+        "status": {
+          "type": "cds.String",
+          "length": 20,
+          "default": {
+            "val": "PENDING"
+          }
+        },
+        "createdAt": {
+          "type": "cds.Timestamp"
+        }
+      }
+    },
+    "InventoryService": {
+      "@source": "srv/inventory-service.cds",
+      "kind": "service"
+    },
+    "InventoryService.Products": {
+      "kind": "entity",
+      "projection": {
+        "from": {
+          "ref": [
+            "inventory.Product"
+          ]
+        }
+      },
+      "elements": {
+        "ID": {
+          "key": true,
+          "type": "cds.UUID"
+        },
+        "name": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "category": {
+          "type": "cds.String",
+          "length": 50
+        },
+        "unit": {
+          "type": "cds.String",
+          "length": 20
+        },
+        "threshold": {
+          "type": "cds.Integer",
+          "default": {
+            "val": 10
+          }
+        }
+      }
+    },
+    "InventoryService.Warehouses": {
+      "kind": "entity",
+      "projection": {
+        "from": {
+          "ref": [
+            "inventory.Warehouse"
+          ]
+        }
+      },
+      "elements": {
+        "ID": {
+          "key": true,
+          "type": "cds.UUID"
+        },
+        "name": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "location": {
+          "type": "cds.String",
+          "length": 100
+        }
+      }
+    },
+    "InventoryService.StockMovements": {
+      "kind": "entity",
+      "projection": {
+        "from": {
+          "ref": [
+            "inventory.StockMovement"
+          ]
+        }
+      },
+      "elements": {
+        "ID": {
+          "key": true,
+          "type": "cds.UUID"
+        },
+        "product": {
+          "type": "cds.Association",
+          "target": "InventoryService.Products",
+          "keys": [
+            {
+              "ref": [
+                "ID"
+              ]
+            }
+          ]
+        },
+        "warehouse": {
+          "type": "cds.Association",
+          "target": "InventoryService.Warehouses",
+          "keys": [
+            {
+              "ref": [
+                "ID"
+              ]
+            }
+          ]
+        },
+        "type": {
+          "type": "cds.String",
+          "length": 10
+        },
+        "quantity": {
+          "type": "cds.Integer"
+        },
+        "movedAt": {
+          "type": "cds.Timestamp"
+        },
+        "movedBy": {
+          "type": "cds.String",
+          "length": 100
+        }
+      }
+    },
+    "InventoryService.Suppliers": {
+      "kind": "entity",
+      "projection": {
+        "from": {
+          "ref": [
+            "inventory.Supplier"
+          ]
+        }
+      },
+      "elements": {
+        "ID": {
+          "key": true,
+          "type": "cds.UUID"
+        },
+        "name": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "email": {
+          "type": "cds.String",
+          "length": 100
+        }
+      }
+    },
+    "InventoryService.PurchaseOrders": {
+      "kind": "entity",
+      "projection": {
+        "from": {
+          "ref": [
+            "inventory.PurchaseOrder"
+          ]
+        }
+      },
+      "elements": {
+        "ID": {
+          "key": true,
+          "type": "cds.UUID"
+        },
+        "supplier": {
+          "type": "cds.Association",
+          "target": "InventoryService.Suppliers",
+          "keys": [
+            {
+              "ref": [
+                "ID"
+              ]
+            }
+          ]
+        },
+        "product": {
+          "type": "cds.Association",
+          "target": "InventoryService.Products",
+          "keys": [
+            {
+              "ref": [
+                "ID"
+              ]
+            }
+          ]
+        },
+        "quantity": {
+          "type": "cds.Integer"
+        },
+        "status": {
+          "type": "cds.String",
+          "length": 20,
+          "default": {
+            "val": "PENDING"
+          }
+        },
+        "createdAt": {
+          "type": "cds.Timestamp"
+        }
+      }
+    },
+    "cds.outbox.Messages": {
+      "kind": "entity",
+      "elements": {
+        "ID": {
+          "key": true,
+          "type": "cds.UUID"
+        },
+        "timestamp": {
+          "type": "cds.Timestamp"
+        },
+        "target": {
+          "type": "cds.String"
+        },
+        "msg": {
+          "type": "cds.LargeString"
+        },
+        "attempts": {
+          "type": "cds.Integer",
+          "default": {
+            "val": 0
+          }
+        },
+        "partition": {
+          "type": "cds.Integer",
+          "default": {
+            "val": 0
+          }
+        },
+        "lastError": {
+          "type": "cds.LargeString"
+        },
+        "lastAttemptTimestamp": {
+          "type": "cds.Timestamp"
+        },
+        "status": {
+          "type": "cds.String",
+          "length": 23
+        },
+        "task": {
+          "type": "cds.String",
+          "length": 255
+        },
+        "appid": {
+          "type": "cds.String",
+          "length": 255
+        }
+      }
+    }
+  },
+  "extensions": [
+    {
+      "annotate": "LeaveService.LeaveRequests",
+      "@UI.LineItem": [
+        {
+          "Value": {
+            "=": "employee.name"
+          },
+          "Label": "Employee"
+        },
+        {
+          "Value": {
+            "=": "startDate"
+          },
+          "Label": "Start Date"
+        },
+        {
+          "Value": {
+            "=": "endDate"
+          },
+          "Label": "End Date"
+        },
+        {
+          "Value": {
+            "=": "days"
+          },
+          "Label": "Days"
+        },
+        {
+          "Value": {
+            "=": "reason"
+          },
+          "Label": "Reason"
+        },
+        {
+          "Value": {
+            "=": "status"
+          },
+          "Label": "Status"
+        },
+        {
+          "Value": {
+            "=": "reviewedBy"
+          },
+          "Label": "Reviewed By"
+        }
+      ],
+      "@UI.HeaderInfo.TypeName": "Leave Request",
+      "@UI.HeaderInfo.TypeNamePlural": "Leave Requests"
+    }
+  ],
+  "meta": {
+    "creator": "CDS Compiler v6.8.0",
+    "compilerCsnFlavor": "inferred",
+    "flavor": "inferred"
+  },
+  "$version": "2.0"
+}

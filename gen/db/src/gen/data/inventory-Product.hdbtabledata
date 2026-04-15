@@ -1,0 +1,33 @@
+{
+  "format_version": 1,
+  "imports": [
+    {
+      "target_table": "INVENTORY_PRODUCT",
+      "source_data": {
+        "data_type": "CSV",
+        "file_name": "inventory-Product.csv",
+        "has_header": true,
+        "type_config": {
+          "delimiter": ","
+        }
+      },
+      "import_settings": {
+        "import_columns": [
+          "ID",
+          "NAME",
+          "CATEGORY",
+          "UNIT",
+          "THRESHOLD"
+        ],
+        "include_filter": []
+      },
+      "column_mappings": {
+        "ID": "ID",
+        "NAME": "name",
+        "CATEGORY": "category",
+        "UNIT": "unit",
+        "THRESHOLD": "threshold"
+      }
+    }
+  ]
+}

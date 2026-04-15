@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Purchase Orders</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="sidebar">
+    <h2>Inventory</h2>
+    <a href="index.html">Dashboard</a>
+    <a href="products.html">Products</a>
+    <a href="movements.html">Movements</a>
+    <a href="orders.html" class="active">Orders</a>
+  </div>
+
+  <div class="main">
+    <div class="page-header">
+      <h2>Purchase Orders</h2>
+      <select id="statusFilter" onchange="filterOrders()">
+        <option value="">All</option>
+        <option value="PENDING">Pending</option>
+        <option value="COMPLETED">Completed</option>
+        <option value="CANCELLED">Cancelled</option>
+      </select>
+    </div>
+
+    <div class="kpi-grid" style="margin-bottom: 24px;">
+      <div class="kpi-card warning">
+        <p>Pending</p>
+        <h2 id="kpi-pending">--</h2>
+      </div>
+      <div class="kpi-card">
+        <p>Completed</p>
+        <h2 id="kpi-completed">--</h2>
+      </div>
+      <div class="kpi-card">
+        <p>Total Orders</p>
+        <h2 id="kpi-total">--</h2>
+      </div>
+    </div>
+
+    <div class="table-box">
+      <table>
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th>Supplier</th>
+            <th>Quantity</th>
+            <th>Status</th>
+            <th>Created On</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="orderBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Edit Status Modal -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <h3>Update Order Status</h3>
+      <select id="m-status">
+        <option value="PENDING">Pending</option>
+        <option value="COMPLETED">Completed</option>
+        <option value="CANCELLED">Cancelled</option>
+      </select>
+      <div class="modal-actions">
+        <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+        <button class="btn" onclick="updateStatus()">Update</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const BASE = 'https://994ae882trial-dev-dev-project-srv.cfapps.us10-001.hana.ondemand.com/odata/v4/inventory';
+    let allOrders = [];
+    let selectedOrderId = null;
+
+    async function loadOrders() {
+      const [orderRes, prodRes, supplierRes] = await Promise.all([
+        fetch(`${BASE}/PurchaseOrders`),
+        fetch(`${BASE}/Products`),
+        fetch(`${BASE}/Suppliers`)
+      ]);
+
+      const orders    = orderRes.ok    ? (await orderRes.json()).value    : [];
+      const products  = prodRes.ok     ? (await prodRes.json()).value     : [];
+      const suppliers = supplierRes.ok ? (await supplierRes.json()).value : [];
+
+      const prodMap = {};
+      products.forEach(p => prodMap[p.ID] = p.name);
+
+      const suppMap = {};
+      suppliers.forEach(s => suppMap[s.ID] = s.name);
+
+      allOrders = orders.map(o => ({
+        ...o,
+        productName:  prodMap[o.product_ID]   || '--',
+        supplierName: suppMap[o.supplier_ID]  || '--',
+        date: o.createdAt ? o.createdAt.split('T')[0] : '--'
+      }));
+
+      // KPIs
+      document.getElementById('kpi-pending').innerText   = allOrders.filter(o => o.status === 'PENDING').length;
+      document.getElementById('kpi-completed').innerText = allOrders.filter(o => o.status === 'COMPLETED').length;
+      document.getElementById('kpi-total').innerText     = allOrders.length;
+
+      renderTable(allOrders);
+    }
+
+    function renderTable(data) {
+      document.getElementById('orderBody').innerHTML = data.map(o => `
+        <tr>
+          <td>${o.productName}</td>
+          <td>${o.supplierName}</td>
+          <td>${o.quantity}</td>
+          <td><span class="badge ${statusClass(o.status)}">${o.status}</span></td>
+          <td>${o.date}</td>
+          <td><button class="btn" style="padding:4px 10px;font-size:12px" onclick="openModal('${o.ID}','${o.status}')">Update</button></td>
+        </tr>`).join('');
+    }
+
+    function statusClass(status) {
+      if (status === 'PENDING')   return 'badge-warning';
+      if (status === 'COMPLETED') return 'badge-success';
+      return 'badge-danger';
+    }
+
+    function filterOrders() {
+      const val = document.getElementById('statusFilter').value;
+      renderTable(val ? allOrders.filter(o => o.status === val) : allOrders);
+    }
+
+    function openModal(id, status) {
+      selectedOrderId = id;
+      document.getElementById('m-status').value = status;
+      document.getElementById('modalOverlay').classList.add('open');
+    }
+
+    function closeModal() {
+      document.getElementById('modalOverlay').classList.remove('open');
+      selectedOrderId = null;
+    }
+
+    async function updateStatus() {
+      const status = document.getElementById('m-status').value;
+      const res = await fetch(`${BASE}/PurchaseOrders(${selectedOrderId})`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status })
+      });
+
+      if (res.ok) {
+        closeModal();
+        loadOrders();
+      } else {
+        alert('Failed to update status');
+      }
+    }
+
+    loadOrders();
+  </script>
+</body>
+</html>
