@@ -25,10 +25,7 @@
         }
       },
       "auth": {
-        "kind": "dummy",
-        "[production]": {
-        "kind": "jwt"
-      }
+        "kind": "dummy"
       }
     },
   "server": {
