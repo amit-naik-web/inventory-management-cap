@@ -3,42 +3,33 @@ using inventory from '../db/schema';
 @requires: 'authenticated-user'
 service InventoryService {
 
-  @readonly
+  @restrict: [
+    { grant: 'READ', to: ['WarehouseManager', 'Viewer'] },
+    { grant: ['CREATE', 'UPDATE', 'DELETE'], to: 'WarehouseManager' }
+  ]
   entity Products       as projection on inventory.Product;
 
-  @readonly
+  @restrict: [
+    { grant: 'READ', to: ['WarehouseManager', 'Viewer'] },
+    { grant: ['CREATE', 'UPDATE', 'DELETE'], to: 'WarehouseManager' }
+  ]
   entity Warehouses     as projection on inventory.Warehouse;
 
-  @readonly
+  @restrict: [
+    { grant: 'READ', to: ['WarehouseManager', 'Viewer'] },
+    { grant: ['CREATE', 'UPDATE', 'DELETE'], to: 'WarehouseManager' }
+  ]
   entity Suppliers      as projection on inventory.Supplier;
 
-  @readonly
+  @restrict: [
+    { grant: 'READ', to: ['WarehouseManager', 'Viewer'] },
+    { grant: ['CREATE', 'UPDATE', 'DELETE'], to: 'WarehouseManager' }
+  ]
   entity StockMovements as projection on inventory.StockMovement;
 
-  @readonly
+  @restrict: [
+    { grant: 'READ', to: ['WarehouseManager', 'Viewer'] },
+    { grant: ['CREATE', 'UPDATE', 'DELETE'], to: 'WarehouseManager' }
+  ]
   entity PurchaseOrders as projection on inventory.PurchaseOrder;
-
-  @restrict: [
-    { grant: 'READ', to: ['WarehouseManager', 'Viewer'] },
-    { grant: ['CREATE', 'UPDATE', 'DELETE'], to: 'WarehouseManager' }
-  ]
-  entity ManagedProducts       as projection on inventory.Product;
-
-  @restrict: [
-    { grant: 'READ', to: ['WarehouseManager', 'Viewer'] },
-    { grant: ['CREATE', 'UPDATE', 'DELETE'], to: 'WarehouseManager' }
-  ]
-  entity ManagedStockMovements as projection on inventory.StockMovement;
-
-  @restrict: [
-    { grant: 'READ', to: ['WarehouseManager', 'Viewer'] },
-    { grant: ['CREATE', 'UPDATE', 'DELETE'], to: 'WarehouseManager' }
-  ]
-  entity ManagedOrders         as projection on inventory.PurchaseOrder;
-
-  @restrict: [
-    { grant: 'READ', to: ['WarehouseManager', 'Viewer'] },
-    { grant: ['CREATE', 'UPDATE', 'DELETE'], to: 'WarehouseManager' }
-  ]
-  entity ManagedSuppliers      as projection on inventory.Supplier;
 }
