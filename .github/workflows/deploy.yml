@@ -35,4 +35,4 @@ jobs:
       - name: Deploy to BTP
         run: |
           cf login -a "${{ secrets.CF_API }}" -u "${{ secrets.CF_USER }}" -p "${{ secrets.CF_PASSWORD }}" -o "${{ secrets.CF_ORG }}" -s "${{ secrets.CF_SPACE }}"
-          cf deploy mta_archives/dev_project_1.0.0.mtar
+          cf deploy mta_archives/dev_project_1.0.0.mtar --abort-on-error
