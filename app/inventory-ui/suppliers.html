@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Suppliers</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="sidebar">
+    <h2>Inventory</h2>
+    <a href="index.html">Dashboard</a>
+    <a href="products.html">Products</a>
+    <a href="movements.html">Movements</a>
+    <a href="orders.html">Orders</a>
+    <a href="suppliers.html" class="active">Suppliers</a>
+  </div>
+
+  <div class="main">
+    <div class="page-header">
+      <h2>Suppliers</h2>
+      <button class="btn" onclick="openModal()">+ Add Supplier</button>
+    </div>
+
+    <div class="table-box">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="supplierBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Add/Edit Modal -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <h3 id="modalTitle">Add Supplier</h3>
+      <input type="text" id="m-name" placeholder="Supplier name">
+      <input type="text" id="m-email" placeholder="Email address">
+      <div class="modal-actions">
+        <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+        <button class="btn" onclick="submitSupplier()">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Confirm Modal -->
+  <div class="modal-overlay" id="deleteOverlay">
+    <div class="modal">
+      <h3>Delete Supplier</h3>
+      <p style="font-size:14px;color:var(--color-text-secondary,#666);margin-bottom:16px">Are you sure you want to delete this supplier?</p>
+      <div class="modal-actions">
+        <button class="btn-cancel" onclick="closeDelete()">Cancel</button>
+        <button class="btn" style="background:#E24B4A" onclick="confirmDelete()">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const BASE = 'https://994ae882trial-dev-dev-project-srv.cfapps.us10-001.hana.ondemand.com/odata/v4/inventory';
+    let editingId = null;
+    let deletingId = null;
+
+    async function loadSuppliers() {
+      const res = await fetch(`${BASE}/Suppliers`);
+      const suppliers = res.ok ? (await res.json()).value : [];
+
+      document.getElementById('supplierBody').innerHTML = suppliers.map(s => `
+        <tr>
+          <td>${s.name}</td>
+          <td>${s.email}</td>
+          <td style="display:flex;gap:8px">
+            <button class="btn" style="padding:4px 10px;font-size:12px" onclick="openEdit('${s.ID}','${s.name}','${s.email}')">Edit</button>
+            <button class="btn" style="padding:4px 10px;font-size:12px;background:#E24B4A" onclick="openDelete('${s.ID}')">Delete</button>
+          </td>
+        </tr>`).join('');
+    }
+
+    function openModal() {
+      editingId = null;
+      document.getElementById('modalTitle').innerText = 'Add Supplier';
+      document.getElementById('m-name').value  = '';
+      document.getElementById('m-email').value = '';
+      document.getElementById('modalOverlay').classList.add('open');
+    }
+
+    function openEdit(id, name, email) {
+      editingId = id;
+      document.getElementById('modalTitle').innerText = 'Edit Supplier';
+      document.getElementById('m-name').value  = name;
+      document.getElementById('m-email').value = email;
+      document.getElementById('modalOverlay').classList.add('open');
+    }
+
+    function closeModal() {
+      document.getElementById('modalOverlay').classList.remove('open');
+      editingId = null;
+    }
+
+    function openDelete(id) {
+      deletingId = id;
+      document.getElementById('deleteOverlay').classList.add('open');
+    }
+
+    function closeDelete() {
+      document.getElementById('deleteOverlay').classList.remove('open');
+      deletingId = null;
+    }
+
+    async function submitSupplier() {
+      const name  = document.getElementById('m-name').value;
+      const email = document.getElementById('m-email').value;
+
+      if (!name || !email) return alert('Fill in all fields');
+
+      const method = editingId ? 'PATCH' : 'POST';
+      const url    = editingId
+        ? `${BASE}/Suppliers('${editingId}')`
+        : `${BASE}/Suppliers`;
+
+      const body = editingId
+        ? { name, email }
+        : { ID: crypto.randomUUID(), name, email };
+
+      const res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+
+      if (res.ok) { closeModal(); loadSuppliers(); }
+      else alert('Failed to save supplier');
+    }
+
+    async function confirmDelete() {
+      const res = await fetch(`${BASE}/Suppliers('${deletingId}')`, {
+        method: 'DELETE'
+      });
+
+      if (res.ok) { closeDelete(); loadSuppliers(); }
+      else alert('Failed to delete supplier');
+    }
+
+    loadSuppliers();
+  </script>
+</body>
+</html>
