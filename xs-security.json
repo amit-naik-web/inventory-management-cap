@@ -2,6 +2,30 @@
   "xsappname": "dev_project",
   "tenant-mode": "dedicated",
   "description": "Inventory & Warehouse Management App",
-  "scopes": [],
-  "role-templates": []
+  "scopes": [
+    {
+      "name": "$XSAPPNAME.WarehouseManager",
+      "description": "Can create and manage stock movements, orders and suppliers"
+    },
+    {
+      "name": "$XSAPPNAME.Viewer",
+      "description": "Can only view inventory data"
+    }
+  ],
+  "role-templates": [
+    {
+      "name": "WarehouseManager",
+      "description": "Warehouse Manager role",
+      "scope-references": [
+        "$XSAPPNAME.WarehouseManager"
+      ]
+    },
+    {
+      "name": "Viewer",
+      "description": "Viewer role",
+      "scope-references": [
+        "$XSAPPNAME.Viewer"
+      ]
+    }
+  ]
 }
