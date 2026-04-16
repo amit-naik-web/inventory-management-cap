@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Analytics</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="sidebar">
+    <h2>Inventory</h2>
+    <a href="index.html">Dashboard</a>
+    <a href="products.html">Products</a>
+    <a href="movements.html">Movements</a>
+    <a href="orders.html">Orders</a>
+    <a href="suppliers.html">Suppliers</a>
+    <a href="analytics.html" class="active">Analytics</a>
+  </div>
+
+  <div class="main">
+    <div class="page-header">
+      <h2>Analytics</h2>
+    </div>
+
+    <div class="kpi-grid" style="margin-bottom:24px">
+      <div class="kpi-card">
+        <p>Total Stock IN</p>
+        <h2 id="kpi-in">--</h2>
+      </div>
+      <div class="kpi-card warning">
+        <p>Total Stock OUT</p>
+        <h2 id="kpi-out">--</h2>
+      </div>
+      <div class="kpi-card">
+        <p>Net Stock</p>
+        <h2 id="kpi-net">--</h2>
+      </div>
+      <div class="kpi-card">
+        <p>Most Active Product</p>
+        <h2 id="kpi-active" style="font-size:16px">--</h2>
+      </div>
+    </div>
+
+    <div class="charts-grid" style="margin-bottom:24px">
+      <div class="chart-box">
+        <h3>Top products by stock movement</h3>
+        <canvas id="topProductsChart"></canvas>
+      </div>
+      <div class="chart-box">
+        <h3>IN vs OUT by warehouse</h3>
+        <canvas id="warehouseChart"></canvas>
+      </div>
+    </div>
+
+    <div class="charts-grid">
+      <div class="chart-box">
+        <h3>Order status breakdown</h3>
+        <canvas id="orderStatusChart"></canvas>
+      </div>
+      <div class="chart-box">
+        <h3>Monthly stock movement trend</h3>
+        <canvas id="monthlyChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const BASE = 'https://994ae882trial-dev-dev-project-srv.cfapps.us10-001.hana.ondemand.com/odata/v4/inventory';
+
+    async function loadAnalytics() {
+      const [movRes, prodRes, whRes, orderRes] = await Promise.all([
+        fetch(`${BASE}/StockMovements`),
+        fetch(`${BASE}/Products`),
+        fetch(`${BASE}/Warehouses`),
+        fetch(`${BASE}/PurchaseOrders`)
+      ]);
+
+      const movements  = movRes.ok   ? (await movRes.json()).value   : [];
+      const products   = prodRes.ok  ? (await prodRes.json()).value  : [];
+      const warehouses = whRes.ok    ? (await whRes.json()).value    : [];
+      const orders     = orderRes.ok ? (await orderRes.json()).value : [];
+
+      const prodMap = {};
+      products.forEach(p => prodMap[p.ID] = p.name);
+
+      const whMap = {};
+      warehouses.forEach(w => whMap[w.ID] = w.name);
+
+      // KPIs
+      const totalIN  = movements.filter(m => m.type === 'IN').reduce((s, m) => s + m.quantity, 0);
+      const totalOUT = movements.filter(m => m.type === 'OUT').reduce((s, m) => s + m.quantity, 0);
+      document.getElementById('kpi-in').innerText  = totalIN;
+      document.getElementById('kpi-out').innerText = totalOUT;
+      document.getElementById('kpi-net').innerText = totalIN - totalOUT;
+
+      // Most active product
+      const prodActivity = {};
+      movements.forEach(m => {
+        prodActivity[m.product_ID] = (prodActivity[m.product_ID] || 0) + m.quantity;
+      });
+      const mostActive = Object.entries(prodActivity).sort((a, b) => b[1] - a[1])[0];
+      document.getElementById('kpi-active').innerText = mostActive ? prodMap[mostActive[0]] || '--' : '--';
+
+      renderTopProducts(movements, prodMap);
+      renderWarehouseChart(movements, whMap);
+      renderOrderStatus(orders);
+      renderMonthlyTrend(movements);
+    }
+
+    function renderTopProducts(movements, prodMap) {
+      const prodTotals = {};
+      movements.forEach(m => {
+        if (!prodTotals[m.product_ID]) prodTotals[m.product_ID] = { IN: 0, OUT: 0 };
+        prodTotals[m.product_ID][m.type] += m.quantity;
+      });
+
+      const labels = Object.keys(prodTotals).map(id => prodMap[id] || id);
+      new Chart(document.getElementById('topProductsChart'), {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: [
+            {
+              label: 'IN',
+              data: Object.values(prodTotals).map(p => p.IN),
+              backgroundColor: '#1D9E75'
+            },
+            {
+              label: 'OUT',
+              data: Object.values(prodTotals).map(p => p.OUT),
+              backgroundColor: '#E24B4A'
+            }
+          ]
+        },
+        options: { responsive: true, scales: { x: { stacked: false } } }
+      });
+    }
+
+    function renderWarehouseChart(movements, whMap) {
+      const whTotals = {};
+      movements.forEach(m => {
+        if (!whTotals[m.warehouse_ID]) whTotals[m.warehouse_ID] = { IN: 0, OUT: 0 };
+        whTotals[m.warehouse_ID][m.type] += m.quantity;
+      });
+
+      const labels = Object.keys(whTotals).map(id => whMap[id] || id);
+      new Chart(document.getElementById('warehouseChart'), {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: [
+            {
+              label: 'IN',
+              data: Object.values(whTotals).map(w => w.IN),
+              backgroundColor: '#378ADD'
+            },
+            {
+              label: 'OUT',
+              data: Object.values(whTotals).map(w => w.OUT),
+              backgroundColor: '#E24B4A'
+            }
+          ]
+        },
+        options: { responsive: true }
+      });
+    }
+
+    function renderOrderStatus(orders) {
+      const statusCount = { PENDING: 0, COMPLETED: 0, CANCELLED: 0 };
+      orders.forEach(o => {
+        if (statusCount[o.status] !== undefined) statusCount[o.status]++;
+      });
+
+      new Chart(document.getElementById('orderStatusChart'), {
+        type: 'doughnut',
+        data: {
+          labels: ['Pending', 'Completed', 'Cancelled'],
+          datasets: [{
+            data: [statusCount.PENDING, statusCount.COMPLETED, statusCount.CANCELLED],
+            backgroundColor: ['#FAC775', '#1D9E75', '#E24B4A']
+          }]
+        },
+        options: { responsive: true }
+      });
+    }
+
+    function renderMonthlyTrend(movements) {
+      const monthly = {};
+      movements.forEach(m => {
+        const month = m.movedAt?.substring(0, 7);
+        if (!month) return;
+        if (!monthly[month]) monthly[month] = { IN: 0, OUT: 0 };
+        monthly[month][m.type] += m.quantity;
+      });
+
+      const labels = Object.keys(monthly).sort();
+      new Chart(document.getElementById('monthlyChart'), {
+        type: 'line',
+        data: {
+          labels,
+          datasets: [
+            {
+              label: 'Stock In',
+              data: labels.map(d => monthly[d].IN),
+              borderColor: '#1D9E75',
+              tension: 0.3,
+              fill: false
+            },
+            {
+              label: 'Stock Out',
+              data: labels.map(d => monthly[d].OUT),
+              borderColor: '#E24B4A',
+              tension: 0.3,
+              fill: false
+            }
+          ]
+        },
+        options: { responsive: true }
+      });
+    }
+
+    loadAnalytics();
+  </script>
+</body>
+</html>
