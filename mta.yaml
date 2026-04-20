@@ -25,7 +25,8 @@ modules:
           srv-url: ${default-url}
     requires:
       - name: dev_project-db
-      - name: dev_project-uaa       # ← ADDED
+      - name: dev_project-uaa
+      - name: dev_project-logging     
 
   - name: dev_project-db-deployer
     type: hdb
@@ -60,3 +61,9 @@ resources:
       service: xsuaa
       service-plan: application
       path: ./xs-security.json
+    
+  - name: dev_project-logging
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: application-logs
+      service-plan: lite

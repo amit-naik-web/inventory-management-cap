@@ -153,10 +153,28 @@
     },
     "InventoryService": {
       "@source": "srv/inventory-service.cds",
-      "kind": "service"
+      "kind": "service",
+      "@requires": "authenticated-user"
     },
     "InventoryService.Products": {
       "kind": "entity",
+      "@restrict": [
+        {
+          "grant": "READ",
+          "to": [
+            "WarehouseManager",
+            "Viewer"
+          ]
+        },
+        {
+          "grant": [
+            "CREATE",
+            "UPDATE",
+            "DELETE"
+          ],
+          "to": "WarehouseManager"
+        }
+      ],
       "projection": {
         "from": {
           "ref": [
@@ -191,6 +209,23 @@
     },
     "InventoryService.Warehouses": {
       "kind": "entity",
+      "@restrict": [
+        {
+          "grant": "READ",
+          "to": [
+            "WarehouseManager",
+            "Viewer"
+          ]
+        },
+        {
+          "grant": [
+            "CREATE",
+            "UPDATE",
+            "DELETE"
+          ],
+          "to": "WarehouseManager"
+        }
+      ],
       "projection": {
         "from": {
           "ref": [
@@ -213,8 +248,66 @@
         }
       }
     },
+    "InventoryService.Suppliers": {
+      "kind": "entity",
+      "@restrict": [
+        {
+          "grant": "READ",
+          "to": [
+            "WarehouseManager",
+            "Viewer"
+          ]
+        },
+        {
+          "grant": [
+            "CREATE",
+            "UPDATE",
+            "DELETE"
+          ],
+          "to": "WarehouseManager"
+        }
+      ],
+      "projection": {
+        "from": {
+          "ref": [
+            "inventory.Supplier"
+          ]
+        }
+      },
+      "elements": {
+        "ID": {
+          "key": true,
+          "type": "cds.UUID"
+        },
+        "name": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "email": {
+          "type": "cds.String",
+          "length": 100
+        }
+      }
+    },
     "InventoryService.StockMovements": {
       "kind": "entity",
+      "@restrict": [
+        {
+          "grant": "READ",
+          "to": [
+            "WarehouseManager",
+            "Viewer"
+          ]
+        },
+        {
+          "grant": [
+            "CREATE",
+            "UPDATE",
+            "DELETE"
+          ],
+          "to": "WarehouseManager"
+        }
+      ],
       "projection": {
         "from": {
           "ref": [
@@ -265,32 +358,25 @@
         }
       }
     },
-    "InventoryService.Suppliers": {
-      "kind": "entity",
-      "projection": {
-        "from": {
-          "ref": [
-            "inventory.Supplier"
-          ]
-        }
-      },
-      "elements": {
-        "ID": {
-          "key": true,
-          "type": "cds.UUID"
-        },
-        "name": {
-          "type": "cds.String",
-          "length": 100
-        },
-        "email": {
-          "type": "cds.String",
-          "length": 100
-        }
-      }
-    },
     "InventoryService.PurchaseOrders": {
       "kind": "entity",
+      "@restrict": [
+        {
+          "grant": "READ",
+          "to": [
+            "WarehouseManager",
+            "Viewer"
+          ]
+        },
+        {
+          "grant": [
+            "CREATE",
+            "UPDATE",
+            "DELETE"
+          ],
+          "to": "WarehouseManager"
+        }
+      ],
       "projection": {
         "from": {
           "ref": [
@@ -389,57 +475,6 @@
       }
     }
   },
-  "extensions": [
-    {
-      "annotate": "LeaveService.LeaveRequests",
-      "@UI.LineItem": [
-        {
-          "Value": {
-            "=": "employee.name"
-          },
-          "Label": "Employee"
-        },
-        {
-          "Value": {
-            "=": "startDate"
-          },
-          "Label": "Start Date"
-        },
-        {
-          "Value": {
-            "=": "endDate"
-          },
-          "Label": "End Date"
-        },
-        {
-          "Value": {
-            "=": "days"
-          },
-          "Label": "Days"
-        },
-        {
-          "Value": {
-            "=": "reason"
-          },
-          "Label": "Reason"
-        },
-        {
-          "Value": {
-            "=": "status"
-          },
-          "Label": "Status"
-        },
-        {
-          "Value": {
-            "=": "reviewedBy"
-          },
-          "Label": "Reviewed By"
-        }
-      ],
-      "@UI.HeaderInfo.TypeName": "Leave Request",
-      "@UI.HeaderInfo.TypeNamePlural": "Leave Requests"
-    }
-  ],
   "meta": {
     "creator": "CDS Compiler v6.8.0",
     "compilerCsnFlavor": "inferred",

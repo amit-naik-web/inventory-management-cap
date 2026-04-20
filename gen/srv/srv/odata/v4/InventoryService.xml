@@ -19,11 +19,11 @@
       <EntityContainer Name="EntityContainer">
         <EntitySet Name="Products" EntityType="InventoryService.Products"/>
         <EntitySet Name="Warehouses" EntityType="InventoryService.Warehouses"/>
+        <EntitySet Name="Suppliers" EntityType="InventoryService.Suppliers"/>
         <EntitySet Name="StockMovements" EntityType="InventoryService.StockMovements">
           <NavigationPropertyBinding Path="product" Target="Products"/>
           <NavigationPropertyBinding Path="warehouse" Target="Warehouses"/>
         </EntitySet>
-        <EntitySet Name="Suppliers" EntityType="InventoryService.Suppliers"/>
         <EntitySet Name="PurchaseOrders" EntityType="InventoryService.PurchaseOrders">
           <NavigationPropertyBinding Path="supplier" Target="Suppliers"/>
           <NavigationPropertyBinding Path="product" Target="Products"/>
@@ -47,6 +47,14 @@
         <Property Name="name" Type="Edm.String" MaxLength="100"/>
         <Property Name="location" Type="Edm.String" MaxLength="100"/>
       </EntityType>
+      <EntityType Name="Suppliers">
+        <Key>
+          <PropertyRef Name="ID"/>
+        </Key>
+        <Property Name="ID" Type="Edm.Guid" Nullable="false"/>
+        <Property Name="name" Type="Edm.String" MaxLength="100"/>
+        <Property Name="email" Type="Edm.String" MaxLength="100"/>
+      </EntityType>
       <EntityType Name="StockMovements">
         <Key>
           <PropertyRef Name="ID"/>
@@ -64,14 +72,6 @@
         <Property Name="quantity" Type="Edm.Int32"/>
         <Property Name="movedAt" Type="Edm.DateTimeOffset" Precision="7"/>
         <Property Name="movedBy" Type="Edm.String" MaxLength="100"/>
-      </EntityType>
-      <EntityType Name="Suppliers">
-        <Key>
-          <PropertyRef Name="ID"/>
-        </Key>
-        <Property Name="ID" Type="Edm.Guid" Nullable="false"/>
-        <Property Name="name" Type="Edm.String" MaxLength="100"/>
-        <Property Name="email" Type="Edm.String" MaxLength="100"/>
       </EntityType>
       <EntityType Name="PurchaseOrders">
         <Key>
@@ -96,10 +96,10 @@
       <Annotations Target="InventoryService.Warehouses/ID">
         <Annotation Term="Core.ComputedDefaultValue" Bool="true"/>
       </Annotations>
-      <Annotations Target="InventoryService.StockMovements/ID">
+      <Annotations Target="InventoryService.Suppliers/ID">
         <Annotation Term="Core.ComputedDefaultValue" Bool="true"/>
       </Annotations>
-      <Annotations Target="InventoryService.Suppliers/ID">
+      <Annotations Target="InventoryService.StockMovements/ID">
         <Annotation Term="Core.ComputedDefaultValue" Bool="true"/>
       </Annotations>
       <Annotations Target="InventoryService.PurchaseOrders/ID">
